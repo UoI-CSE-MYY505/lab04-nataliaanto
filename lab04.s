@@ -26,11 +26,19 @@ arrayNotSorted: .word marianna, markos, maria
             ecall
 
 str_ge:
-#---------
-# Write the subroutine code here
-#  You may move jr ra   if you wish.
-#---------
-            jr   ra
+
+lb t0, 0(a0)               #fortwse ton prwto xarakthra tou prwtou string
+    lb t1, 0(a1)           #fortwse ton prwto xarakthra tou deuterou string
+    bgt t0, t1, greater    #an t0 > t1,pigaine sto greater
+    li a0, 0               #epistrefei 0,thewrontas ta strings mi taksinomimena
+    jr ra                  
+
+
+greater:
+    li a0, 1               #epistrefei 1 an to prwto string einai megalitero
+    jr ra                  #den ginetai pliris sigkrisi gia oloklira ta strings
+
+
  
 # ----------------------------------------------------------------------------
 # recCheck(array, size)
@@ -41,9 +49,30 @@ str_ge:
 # else
 #     return 0
 
+
 recCheck:
-#---------
-# Write the subroutine code here
-#  You may move jr ra   if you wish.
-#---------
-            jr   ra
+    li t0, 1
+    beq a1, zero, sorted    #an to megethos einai 0,thewrise ton pinaka taksinomimeno
+    beq a1, t0, sorted      #an to megethos einai 1, thwrise ton pinaka taksinomimeno
+
+ 
+    lw t1, 0(a0)            #fortwsi prwtou string ston t1
+    lw t2, 4(a0)            #fortwsi deuterou string ston t2 xwris elegxo gia megethos pinaka
+    mv a0, t1               #proetoimasia gia klisi tis str_ge
+    mv a1, t2               #proetoimasia gia klisi tis str_ge
+
+    jal ra, str_ge          #klisi str_ge
+    beq a0, zero, not_sorted  #an h str_ge epistrefei 0, thewrise ton pinaka mh taksinomimena
+
+    addi a0, a0, 4          
+    addi a1, a1, -1         #meiwsh tou megethous pinaka
+    jal ra, recCheck        #anadromiki klisi recCheck
+
+not_sorted:
+    li a0, 0                #mh taksinomimenos pinakas
+    jr ra
+
+sorted:
+    li a0, 1                #mh taksinomimenos pinakas
+    jr ra
+            
